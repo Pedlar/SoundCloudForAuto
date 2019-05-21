@@ -1,0 +1,4 @@
+[submodule "soundcloud-api-wrapper"]
+	path = soundcloud-api-wrapper
+	url = https://github.com/Pedlar/java-api-wrapper
+	branch = master

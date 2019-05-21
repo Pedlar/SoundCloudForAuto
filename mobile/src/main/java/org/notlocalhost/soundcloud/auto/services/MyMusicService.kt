@@ -1,4 +1,4 @@
-package org.notlocalhost.soundcloud.auto
+package org.notlocalhost.soundcloud.auto.services
 
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat.MediaItem
@@ -64,10 +64,6 @@ class MyMusicService : MediaBrowserServiceCompat() {
         mSession = MediaSessionCompat(this, "MyMusicService")
         sessionToken = mSession.sessionToken
         mSession.setCallback(MediaSessionCallback())
-        mSession.setFlags(
-            MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or
-                    MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS
-        )
     }
 
     override fun onDestroy() {
