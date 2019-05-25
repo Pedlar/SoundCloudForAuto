@@ -1,65 +1,30 @@
 package org.notlocalhost.soundcloud.auto.services
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaBrowserCompat.MediaItem
 import androidx.media.MediaBrowserServiceCompat
 import android.support.v4.media.session.MediaSessionCompat
+import android.util.Log
+import dagger.android.AndroidInjection
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import org.notlocalhost.soundcloud.auto.api.ScApi
+import org.notlocalhost.soundcloud.auto.services.MediaDisplayHandler.Companion.MEDIA_ROOT_ID
 
 import java.util.ArrayList
+import javax.inject.Inject
 
-/**
- * This class provides a MediaBrowser through a service. It exposes the media library to a browsing
- * client, through the onGetRoot and onLoadChildren methods. It also creates a MediaSession and
- * exposes it through its MediaSession.Token, which allows the client to create a MediaController
- * that connects to and send control commands to the MediaSession remotely. This is useful for
- * user interfaces that need to interact with your media session, like Android Auto. You can
- * (should) also use the same service from your app's UI, which gives a seamless playback
- * experience to the user.
- *
- *
- * To implement a MediaBrowserService, you need to:
- *
- *  *  Extend [MediaBrowserServiceCompat], implementing the media browsing
- * related methods [MediaBrowserServiceCompat.onGetRoot] and
- * [MediaBrowserServiceCompat.onLoadChildren];
- *
- *  *  In onCreate, start a new [MediaSessionCompat] and notify its parent
- * with the session's token [MediaBrowserServiceCompat.setSessionToken];
- *
- *  *  Set a callback on the [MediaSessionCompat.setCallback].
- * The callback will receive all the user's actions, like play, pause, etc;
- *
- *  *  Handle all the actual music playing using any method your app prefers (for example,
- * [android.media.MediaPlayer])
- *
- *  *  Update playbackState, "now playing" metadata and queue, using MediaSession proper methods
- * [MediaSessionCompat.setPlaybackState]
- * [MediaSessionCompat.setMetadata] and
- * [MediaSessionCompat.setQueue])
- *
- *  *  Declare and export the service in AndroidManifest with an intent receiver for the action
- * android.media.browse.MediaBrowserService
- *
- * To make your app compatible with Android Auto, you also need to:
- *
- *  *  Declare a meta-data tag in AndroidManifest.xml linking to a xml resource
- * with a &lt;automotiveApp&gt; root element. For a media app, this must include
- * an &lt;uses name="media"/&gt; element as a child.
- * For example, in AndroidManifest.xml:
- * &lt;meta-data android:name="com.google.android.gms.car.application"
- * android:resource="@xml/automotive_app_desc"/&gt;
- * And in res/values/automotive_app_desc.xml:
- * &lt;automotiveApp&gt;
- * &lt;uses name="media"/&gt;
- * &lt;/automotiveApp&gt;
- *
- */
 class MyMusicService : MediaBrowserServiceCompat() {
-
     private lateinit var mSession: MediaSessionCompat
+
+    @Inject
+    lateinit var mediaDisplayHandler: MediaDisplayHandler
 
     override fun onCreate() {
         super.onCreate()
+        AndroidInjection.inject(this)
 
         mSession = MediaSessionCompat(this, "MyMusicService")
         sessionToken = mSession.sessionToken
@@ -70,16 +35,24 @@ class MyMusicService : MediaBrowserServiceCompat() {
         mSession.release()
     }
 
-    override fun onGetRoot(
-        clientPackageName: String,
-        clientUid: Int,
-        rootHints: Bundle?
-    ): MediaBrowserServiceCompat.BrowserRoot? {
-        return MediaBrowserServiceCompat.BrowserRoot("root", null)
-    }
+    override fun onGetRoot( clientPackageName: String, clientUid: Int, rootHints: Bundle?)
+            = BrowserRoot(MEDIA_ROOT_ID, null)
 
-    override fun onLoadChildren(parentId: String, result: Result<MutableList<MediaItem>>) {
-        result.sendResult(ArrayList())
+    override fun onLoadChildren(parentId: String, result: Result<MutableList<MediaItem>>) { }
+
+    @SuppressLint("CheckResult")
+    override fun onLoadChildren(parentId: String, result: Result<MutableList<MediaItem>>, options: Bundle) {
+        result.detach()
+        // TODO:: Dispose
+        mediaDisplayHandler
+            .handleLoadChildren(parentId, options)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ mediaItems ->
+                result.sendResult(mediaItems)
+            }, {
+                Log.e("MusicService", "Error Loading Children", it)
+            })
     }
 
     private inner class MediaSessionCallback : MediaSessionCompat.Callback() {
@@ -103,4 +76,5 @@ class MyMusicService : MediaBrowserServiceCompat() {
 
         override fun onPlayFromSearch(query: String?, extras: Bundle?) {}
     }
+
 }

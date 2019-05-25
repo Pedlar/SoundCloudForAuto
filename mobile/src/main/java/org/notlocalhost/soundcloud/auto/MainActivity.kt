@@ -3,13 +3,10 @@ package org.notlocalhost.soundcloud.auto
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
-import com.soundcloud.api.Token
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
-import org.notlocalhost.soundcloud.auto.api.ScApi
 import org.notlocalhost.soundcloud.auto.boilerplates.BaseActivity
 import com.uber.autodispose.AutoDispose.autoDisposable
 import org.notlocalhost.soundcloud.auto.fragments.HomeFragment
-import org.notlocalhost.soundcloud.auto.fragments.LoginFragment
 
 import org.notlocalhost.soundcloud.auto.viewmodel.MainActivityViewModel
 import javax.inject.Inject
@@ -30,12 +27,10 @@ class MainActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.observeForTokenChanges()
+        viewModel.observeForUserChanges()
             .`as`(autoDisposable(AndroidLifecycleScopeProvider.from(this, Lifecycle.Event.ON_PAUSE)))
-            .subscribe({ token ->
-                if(token.valid()) {
-                    showFragment(homeFragment)
-                }
+            .subscribe({ user ->
+                showFragment(homeFragment)
             }, {
 
             })

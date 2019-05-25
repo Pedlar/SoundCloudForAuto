@@ -2,12 +2,10 @@ package org.notlocalhost.soundcloud.auto.di
 
 import android.app.Application
 import android.content.Context
-import android.content.SharedPreferences
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
-import org.notlocalhost.soundcloud.auto.App
 import org.notlocalhost.soundcloud.auto.api.modules.SoundcloudApiModule
 import javax.inject.Singleton
 

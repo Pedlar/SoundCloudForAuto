@@ -16,6 +16,7 @@ import org.notlocalhost.soundcloud.auto.models.LoginModel
 import org.notlocalhost.soundcloud.auto.R
 import org.notlocalhost.soundcloud.auto.boilerplates.BaseFragment
 import org.notlocalhost.soundcloud.auto.di.scopes.ActivityScope
+import org.notlocalhost.soundcloud.auto.models.SoundCloudUser
 import org.notlocalhost.soundcloud.auto.viewmodel.LoginViewModel
 import javax.inject.Inject
 
@@ -41,8 +42,8 @@ class LoginFragment @Inject constructor() : BaseFragment() {
 
     private fun onSubmit(loginModel: LoginModel) {
         viewModel.login(loginModel)
-            .`as`(autoDisposable<Token>(AndroidLifecycleScopeProvider.from(this, Lifecycle.Event.ON_STOP)))
-            .subscribe({ token ->
+            .`as`(autoDisposable<SoundCloudUser>(AndroidLifecycleScopeProvider.from(this, Lifecycle.Event.ON_STOP)))
+            .subscribe({ user ->
 
                 }, { throwable ->
                     Log.e("Madison", "Error With Login", throwable)

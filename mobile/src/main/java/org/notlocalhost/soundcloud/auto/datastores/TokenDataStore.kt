@@ -16,13 +16,12 @@ class TokenDataStore @Inject constructor(private val sharedPreferences: SharedPr
 
     var token: Token?
     get() = with(sharedPreferences) {
-        if (sharedPreferences.contains(TOKEN_ACCESS_KEY)) {
-            return Token(getString(TOKEN_ACCESS_KEY, null),
-            getString(TOKEN_REFRESH_KEY, null),
-            getString(TOKEN_SCOPE_KEY, null))
-        }
-
-        null
+        if (contains(TOKEN_ACCESS_KEY))
+            Token(getString(TOKEN_ACCESS_KEY, null),
+                  getString(TOKEN_REFRESH_KEY, null),
+                  getString(TOKEN_SCOPE_KEY, null))
+        else
+            null
     }
     set(value) = with(sharedPreferences.edit()) {
         putString(TOKEN_ACCESS_KEY, value?.access)
@@ -37,7 +36,7 @@ class TokenDataStore @Inject constructor(private val sharedPreferences: SharedPr
 
     companion object {
         const val TOKEN_ACCESS_KEY = "token_access_key"
-        const val TOKEN_REFRESH_KEY = "token_access_key"
-        const val TOKEN_SCOPE_KEY = "token_access_key"
+        const val TOKEN_REFRESH_KEY = "token_refresh_key"
+        const val TOKEN_SCOPE_KEY = "token_scope_key"
     }
 }

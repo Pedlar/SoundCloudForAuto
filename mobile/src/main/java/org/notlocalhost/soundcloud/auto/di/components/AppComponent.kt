@@ -8,12 +8,14 @@ import org.notlocalhost.soundcloud.auto.di.DataModule
 import org.notlocalhost.soundcloud.auto.di.binding.ActivityBindingModule
 import javax.inject.Singleton
 import dagger.BindsInstance
+import org.notlocalhost.soundcloud.auto.di.binding.ServiceBindingModule
 
 
 @Singleton
 @Component( modules = [
     DataModule::class,
     ActivityBindingModule::class,
+    ServiceBindingModule::class,
     AndroidSupportInjectionModule::class
 ])
 
