@@ -4,6 +4,7 @@ import android.net.Uri
 import android.support.v4.media.MediaDescriptionCompat
 import org.notlocalhost.soundcloud.auto.models.track.Media
 import org.notlocalhost.soundcloud.auto.models.track.PublisherMetaData
+import org.notlocalhost.soundcloud.auto.models.track.VisualsBase
 
 data class SoundCloudTrack (
     val commentCount : Int,
@@ -29,7 +30,7 @@ data class SoundCloudTrack (
     val lastModified : String,
     val commentable : Boolean,
     val policy : String,
-    val visuals : String,
+    val visuals : VisualsBase,
     val kind : String,
     val purchaseUrl : String,
     val sharing : String,

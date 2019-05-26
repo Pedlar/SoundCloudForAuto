@@ -38,7 +38,8 @@ class MyMusicService : MediaBrowserServiceCompat() {
     override fun onGetRoot( clientPackageName: String, clientUid: Int, rootHints: Bundle?)
             = BrowserRoot(MEDIA_ROOT_ID, null)
 
-    override fun onLoadChildren(parentId: String, result: Result<MutableList<MediaItem>>) { }
+    override fun onLoadChildren(parentId: String, result: Result<MutableList<MediaItem>>) =
+        onLoadChildren(parentId, result, Bundle.EMPTY)
 
     @SuppressLint("CheckResult")
     override fun onLoadChildren(parentId: String, result: Result<MutableList<MediaItem>>, options: Bundle) {
@@ -62,7 +63,9 @@ class MyMusicService : MediaBrowserServiceCompat() {
 
         override fun onSeekTo(position: Long) {}
 
-        override fun onPlayFromMediaId(mediaId: String?, extras: Bundle?) {}
+        override fun onPlayFromMediaId(mediaId: String?, extras: Bundle?) {
+            
+        }
 
         override fun onPause() {}
 
